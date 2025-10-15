@@ -37,18 +37,17 @@ export default function App() {
     'properties': {
       'api_field': {
         'type': 'string',
-        'description': 'Select an option from the API.'
+        'description': 'Select an option'
       }
     }
   };
-
 
 
   async function autoCompleteAsyncCallBack(query: string): Promise<{const: string, title: string, data: any}[]> {
      try {
       const response = await searchMedications(query);
       console.log('response', {response});
-      const props = response.map((med: any) => ({data: med, const: med.code, title: med.label?.en || med.label?.English || 'Unknown'}));
+      const props = response.map((med: any) => ({data: med, const: med.hdsId, title: med.description?.en || med.hdsId}));
       return props;
     } catch (error) {
       console.error('Failed to fetch options:', error);

@@ -3,17 +3,14 @@ import React, { useState, useEffect } from 'react';
 import { withJsonFormsControlProps } from '@jsonforms/react';
 import { Autocomplete , FormControl, TextField } from '@mui/material';
 
-import { searchMedications } from './api';
+// no direct API import here; options are provided via uischema callback
 
 const AutoCompleteApiControl = ( { data, handleChange, path, schema, uischema }: any) => {
-  const [proposals, setProposals] = useState<{const: string, title: string}[]>([]);
+  const [proposals, setProposals] = useState<{data: any, const: string, title: string}[]>([]);
   const [loading, setLoading] = useState(true);
   const [inputValue, setInputValue] = useState('');
 
-  console.log('options', uischema.options);
-
   const autoCompleteAsyncCallBack: (query: string) => Promise<{data: any, const: string, title: string}[]> = uischema?.options?.autocompleteAsyncCallBack;
-  console.log(autoCompleteAsyncCallBack);
   if (autoCompleteAsyncCallBack == null) throw new Error('Missing uischema.options.autoCompleteAsyncCallBack');
 
   // Example API call
@@ -36,9 +33,9 @@ const AutoCompleteApiControl = ( { data, handleChange, path, schema, uischema }:
     fetchOptions();
   }, [inputValue]);
 
-  const myhandleChange = function (event: any, newValue: any) {
+  const myhandleChange = function (event: any, newValue: {data: any, const: string, title: string} | null) {
     console.log('myhandleChange', event, newValue);
-    handleChange(path, newValue);
+    handleChange(path, newValue ? newValue.const : undefined);
   };
 
   const myInputChange = function (event: any, newInputValue: any) {
@@ -51,10 +48,15 @@ const AutoCompleteApiControl = ( { data, handleChange, path, schema, uischema }:
       <Autocomplete
         options={proposals}
         loading={loading}
-        value={data || null}
+        value={proposals.find(p => p.const === data) || null}
         onChange={myhandleChange}
         inputValue={inputValue}
         onInputChange={myInputChange}
+        getOptionLabel={(option) => option?.title ?? ''}
+        isOptionEqualToValue={(option, value) => option?.const === value?.const}
+        renderOption={(liProps, option) => (
+          <li {...liProps} key={option.const}>{option.title}</li>
+        )}
         renderInput={(params) => (
           <TextField
             {...params}
