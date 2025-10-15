@@ -1,0 +1,41 @@
+{
+  "name": "app-web-jsforms",
+  "version": "0.0.1",
+  "description": "Test app for HDS Forms",
+  "main": "src/index.js",
+  "author": "Health Data Safe Foundation",
+   "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --port 5173",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "dependencies": {
+    "@hds/lib-js": "git://github.com/healthdatasafe/hds-lib-js",
+    "@jsonforms/core": "3.6.0",
+    "@jsonforms/material-renderers": "3.6.0",
+    "@jsonforms/react": "3.6.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.32.0",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "eslint": "^9.36.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-n": "^17.23.1",
+    "eslint-plugin-promise": "^7.2.1",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^16.2.0",
+    "jiti": "^2.6.0",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.38.0",
+    "vite": "^5.4.8"
+  },
+  "license": "UNLICENSED"
+}
