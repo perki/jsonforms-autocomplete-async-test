@@ -20,7 +20,7 @@ then
   echo "
 Setting up 'dist' folder for publishing to GitHub pages...
 "
-  git clone -b gh-pages git@github.com:healthdatasafe/app-web-jsforms.git dist
+  git clone -b gh-pages git@github.com:perki/jsonforms-autocomplete-async-test.git dist
 fi
 
 echo "
