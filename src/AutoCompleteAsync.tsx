@@ -1,4 +1,4 @@
-// AutoCompleteApiControl.js
+// AutoCompleteAsyncControl.js
 import { useState, useEffect } from 'react';
 import { withJsonFormsControlProps } from '@jsonforms/react';
 import { Autocomplete , FormControl, TextField } from '@mui/material';
@@ -14,19 +14,29 @@ interface AutoCompleteApiProps {
 }
 
 
-export type AutoCompleteAsyncOption = {
+export type AutoCompleteOption = {
   data: any,
   const: string,
   title: string
 }
 
-const AutoCompleteApiControl = ({ data, handleChange, path, schema, uischema }: AutoCompleteApiProps) => {
-  // -- load from usischama config
-  const autoCompleteAsyncCallBack: (query: string) => Promise<AutoCompleteAsyncOption[]> = uischema?.options?.autocompleteAsyncCallBack;
-  if (autoCompleteAsyncCallBack == null) throw new Error('Missing uischema.options.autoCompleteAsyncCallBack');
-  const autoCompleteHelperText: (data: any) => string = uischema?.options?.autoCompleteHelperText || (() => schema.description);
+/**
+ * @return a textual description of the selected item if any
+ */
+export type AutoCompleteAsyncCallBack = (query: string) => Promise<AutoCompleteOption[]>;
 
-  const [options, setOptions] = useState<AutoCompleteAsyncOption[]>([]);
+/**
+ * @return a textual description of the selected item if any
+ */
+export type AutoCompleteHelperText = (option: AutoCompleteOption) => string;
+
+const AutoCompleteAsyncControl = ({ data, handleChange, path, schema, uischema }: AutoCompleteApiProps) => {
+  // -- load from usischema config
+  const autoCompleteAsyncCallBack: AutoCompleteAsyncCallBack = uischema?.options?.autoCompleteAsyncCallBack;
+  if (autoCompleteAsyncCallBack == null) throw new Error('Missing uischema.options.autoCompleteAsyncCallBack');
+  const autoCompleteHelperText: AutoCompleteHelperText = uischema?.options?.autoCompleteHelperText || (() => schema.description);
+  // --
+  const [options, setOptions] = useState<AutoCompleteOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [inputValue, setInputValue] = useState( data?.title || '');
 
@@ -39,9 +49,10 @@ const AutoCompleteApiControl = ({ data, handleChange, path, schema, uischema }: 
         if (Array.isArray(newOptions)) {
           setOptions(newOptions);
         } else {
-          console.log('Prop not array', newOptions);
+          setOptions([]);
         }
       } catch (error) {
+        setOptions([]);
         console.error('Failed to fetch options:', error);
       } finally {
         setLoading(false);
@@ -50,8 +61,8 @@ const AutoCompleteApiControl = ({ data, handleChange, path, schema, uischema }: 
     fetchOptions();
   }, [inputValue]);
 
-  const myOnChange = function (event: any, newValue: AutoCompleteAsyncOption | null) {
-    handleChange(path, newValue?.data);
+  const myOnChange = function (event: any, newValue: AutoCompleteOption | null) {
+    handleChange(path, newValue);
   };
 
   const newInputValue = function (event: any, newInputValue: string) {
@@ -64,7 +75,7 @@ const AutoCompleteApiControl = ({ data, handleChange, path, schema, uischema }: 
       <Autocomplete
         options={options}
         loading={loading}
-        // value='AAA'
+        forcePopupIcon={false}
         onChange={myOnChange}
         inputValue={inputValue}
         onInputChange={newInputValue}
@@ -90,16 +101,16 @@ import { rankWith, hasOption, isStringControl, and, UISchemaElement, JsonSchema 
 
 // This tester will trigger the custom renderer when a UI schema control has
 // a specific custom property, like "render: 'autocomplete-api'".
-export const AutocompleteApiTester = rankWith(
+export const AutocompleteAsyncTester = rankWith(
   3, // A higher rank gives this renderer precedence
   and(
     isStringControl,
-    hasOption('autocompleteAsyncCallBack')
+    hasOption('autoCompleteAsyncCallBack')
   )
 );
 
 
-const SearchFieldRenderer = withJsonFormsControlProps(AutoCompleteApiControl);
+const AutoCompleteAsyncRenderer = withJsonFormsControlProps(AutoCompleteAsyncControl);
 
-export default SearchFieldRenderer;
+export default AutoCompleteAsyncRenderer;
 

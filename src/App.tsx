@@ -1,9 +1,11 @@
 import { searchMedications, type Medication } from './api';
 import { JsonForms } from '@jsonforms/react';
-import SearchField, {
-  AutocompleteApiTester,
-  type AutoCompleteAsyncOption
-} from './SearchField';
+import AutoCompleteAsyncRenderer, {
+  AutocompleteAsyncTester,
+  type AutoCompleteOption,
+  type AutoCompleteAsyncCallBack,
+  type AutoCompleteHelperText
+} from './AutoCompleteAsync';
 import { materialRenderers } from '@jsonforms/material-renderers';
 import { useState, useMemo } from 'react';
 
@@ -55,16 +57,15 @@ export default function App() {
     type: 'object',
     properties: {
       api_field: {
+        title: 'Medication',
         type: 'string',
-        description: 'Select an option',
+        description: 'Select an medication',
         minLength: 3
       }
     }
   };
 
-  async function autoCompleteAsyncCallBack(
-    query: string
-  ): Promise<AutoCompleteAsyncOption[]> {
+  const autoCompleteAsyncCallBack: AutoCompleteAsyncCallBack = async (query) => {
     try {
       const response = await searchMedications(query);
       const options = response.map((med: Medication) => medToOption(med));
@@ -73,22 +74,21 @@ export default function App() {
       console.error('Failed to fetch options:', error);
     }
     return [];
-  }
+  };
 
-  function autoCompleteHelperText(option: AutoCompleteAsyncOption): string {
-    console.log('autoCompleteHelperText', option);
+  const autoCompleteHelperText: AutoCompleteHelperText = (option) => {
+    console.log('autoCompleteHelperText', {option});
     const med: Medication | null = option?.data;
     if (med == null) return schema.properties.api_field.description;
     return `Code: ${med.system} - ${med.code}`;
-  }
+  };
 
   const uischema = {
     type: 'Control',
-    title: 'Medication',
     scope: '#/properties/api_field',
     options: {
-      autocompleteAsyncCallBack: autoCompleteAsyncCallBack,
-      autoCompleteHelperText: autoCompleteHelperText
+      autoCompleteAsyncCallBack,
+      autoCompleteHelperText
     }
   };
 
@@ -106,7 +106,7 @@ export default function App() {
         data={formData}
         renderers={[
           ...materialRenderers,
-          { renderer: SearchField, tester: AutocompleteApiTester }
+          { renderer: AutoCompleteAsyncRenderer, tester: AutocompleteAsyncTester }
         ]}
         onChange={onChange}
       />
@@ -118,7 +118,7 @@ export default function App() {
   );
 }
 
-function medToOption(med: Medication): AutoCompleteAsyncOption {
+function medToOption(med: Medication): AutoCompleteOption {
   return {
     data: med,
     const: med.hdsId,
