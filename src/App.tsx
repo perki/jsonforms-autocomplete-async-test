@@ -100,6 +100,8 @@ export default function App() {
   return (
     <div className="container">
       <h1>test zone</h1>
+      <span>Type at least 3 letters of a medication in the field bellow.</span>
+      <hr/>
       <JsonForms
         schema={schema}
         uischema={uischema}
@@ -111,6 +113,7 @@ export default function App() {
         onChange={onChange}
       />
       <hr />
+      <h4>Data</h4>
       <div style={classes.dataContent}>
         <pre id="boundData">{stringifiedData}</pre>
       </div>
