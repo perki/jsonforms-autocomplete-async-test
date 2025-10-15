@@ -1,9 +1,7 @@
-import { useEffect, useState, useMemo } from 'react';
 import { searchMedications, type Medication } from './api';
-import { JsonForms, withJsonFormsControlProps } from '@jsonforms/react';
+import { JsonForms } from '@jsonforms/react';
 import SearchField, { AutocompleteApiTester } from './SearchField';
 import {
-  materialCells,
   materialRenderers
 } from '@jsonforms/material-renderers';
 
@@ -19,13 +17,7 @@ const classes = {
   }
 };
 
-
 export default function App() {
-  const [query, setQuery] = useState('');
-  const [results, setResults] = useState<Medication[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [selected, setSelected] = useState<Medication | null>(null);
 
   const stringifiedData = '{}'; //useMemo(() => JSON.stringify(eventData, null, 2), [formData]);
 
@@ -51,10 +43,14 @@ export default function App() {
       return props;
     } catch (error) {
       console.error('Failed to fetch options:', error);
-    } finally {
-      setLoading(false);
     }
     return [];
+  }
+
+  function autoCompleteHelperText(med: Medication): string {
+    console.log('autoCompleteHelperText', med);
+    if (med == null) return schema.properties.api_field.description;
+    return `Code: ${med.system} - ${med.code}`;
   }
 
   const uischema = {
@@ -62,7 +58,8 @@ export default function App() {
     'scope': '#/properties/api_field',
     'options': {
       'autocompleteApi': true,
-      'autocompleteAsyncCallBack': autoCompleteAsyncCallBack
+      'autocompleteAsyncCallBack': autoCompleteAsyncCallBack,
+      'autoCompleteHelperText': autoCompleteHelperText
     }
   };
 

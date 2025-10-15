@@ -1,5 +1,5 @@
 // AutoCompleteApiControl.js
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { withJsonFormsControlProps } from '@jsonforms/react';
 import { Autocomplete , FormControl, TextField } from '@mui/material';
 
@@ -13,7 +13,9 @@ const AutoCompleteApiControl = ( { data, handleChange, path, schema, uischema }:
   const autoCompleteAsyncCallBack: (query: string) => Promise<{data: any, const: string, title: string}[]> = uischema?.options?.autocompleteAsyncCallBack;
   if (autoCompleteAsyncCallBack == null) throw new Error('Missing uischema.options.autoCompleteAsyncCallBack');
 
-  // Example API call
+  const autoCompleteHelperText: (data: any) => string = uischema?.options?.autoCompleteHelperText || (() => schema.description);
+
+  // API call on input change
   useEffect(() => {
     const fetchOptions = async () => {
       setLoading(true);
@@ -61,7 +63,7 @@ const AutoCompleteApiControl = ( { data, handleChange, path, schema, uischema }:
           <TextField
             {...params}
             label={schema.title || path}
-            helperText={schema.description}
+            helperText={autoCompleteHelperText(proposals.find(p => p.const === data)?.data)}
           />
         )}
       />

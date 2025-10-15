@@ -40,6 +40,7 @@ export async function searchMedications(query: string): Promise<Medication[]> {
     try {
       const errorData = await response.json() as ErrorResult;
       message = errorData.error;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       // do nothing
     }
