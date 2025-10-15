@@ -5,7 +5,7 @@ import { Autocomplete , FormControl, TextField } from '@mui/material';
 
 // no direct API import here; options are provided via uischema callback
 
-interface AutoCompleteApiProps {
+interface AutoCompleteAsyncProps {
   data: any;
   handleChange(path: string, value: any): void;
   path: string;
@@ -30,7 +30,7 @@ export type AutoCompleteAsyncCallBack = (query: string) => Promise<AutoCompleteO
  */
 export type AutoCompleteHelperText = (option: AutoCompleteOption) => string;
 
-const AutoCompleteAsyncControl = ({ data, handleChange, path, schema, uischema }: AutoCompleteApiProps) => {
+const AutoCompleteAsyncControl = ({ data, handleChange, path, schema, uischema }: AutoCompleteAsyncProps) => {
   // -- load from usischema config
   const autoCompleteAsyncCallBack: AutoCompleteAsyncCallBack = uischema?.options?.autoCompleteAsyncCallBack;
   if (autoCompleteAsyncCallBack == null) throw new Error('Missing uischema.options.autoCompleteAsyncCallBack');
