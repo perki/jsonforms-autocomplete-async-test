@@ -11,6 +11,7 @@ export type LocalizableText = {
 };
 
 export type Medication = {
+  hdsId: string,
   label: LocalizableText,
   system: string,
   source: {
