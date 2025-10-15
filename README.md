@@ -1,4 +1,4 @@
-# JsonFroms AutoComplete Async Test
+# JsonForms AutoComplete Async Test
 
 ## Stack
 - Vite + React + TypeScript + JsonForms.io

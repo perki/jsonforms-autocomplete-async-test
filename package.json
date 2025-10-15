@@ -1,7 +1,7 @@
 {
   "name": "jsonforms-autocomplete-async-test",
   "version": "0.0.1",
-  "description": "JsonFroms AutoComplete Async Test",
+  "description": "JsonForms AutoComplete Async Test",
   "main": "src/index.js",
   "author": "Perki",
    "type": "module",
